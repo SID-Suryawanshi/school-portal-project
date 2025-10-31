@@ -1,0 +1,15 @@
+# General files to ignore
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Java / Spring Boot (inside the 'Backend' folder)
+Backend/target/
+Backend/.mvn/
+Backend/mvnw
+Backend/mvnw.cmd

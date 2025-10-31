@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, .1);
+            border-left-color: #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white; padding: 24px; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 400px; width: 90%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Custom Modal Placeholder -->
+    <div id="customModal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <p id="customModalMessage" class="text-gray-800 mb-4">Message goes here</p>
+            <div id="customModalButtons" class="flex justify-end space-x-2">
+            </div>
+        </div>
+    </div>
+
+    <div id="app-container" class="w-full min-h-screen">
+
+        <!-- ===== LOGIN PAGE ===== -->
+        <div id="loginPage" class="w-full h-screen flex items-center justify-center">
+            <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+                <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">School Portal Login</h1>
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label for="loginEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="loginEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="loginPassword" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                            Login
+                        </button>
+                    </div>
+                </form>
+                <div id="loginMessage" class="mt-4 text-center text-sm text-red-600"></div>
+                <p class="mt-4 text-center text-sm">
+                    Don't have an account? 
+                    <a href="#" onclick="showPage('signupPage')" class="font-medium text-blue-600 hover:text-blue-500">
+                        Sign Up
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- ===== SIGNUP PAGE ===== -->
+        <div id="signupPage" class="w-full py-12 flex items-center justify-center hidden">
+            <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+                <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Create Account</h1>
+                <p class="text-sm text-gray-600 text-center mb-4">The first user to register will automatically become a TEACHER. All subsequent users will be STUDENTS.</p>
+                <form id="signupForm" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="signupFirstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" id="signupFirstName" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label for="signupLastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" id="signupLastName" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="signupEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="signupEmail" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="signupPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="signupPassword" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="signupAge" class="block text-sm font-medium text-gray-700">Age</label>
+                        <input type="number" id="signupAge" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="signupMobile" class="block text-sm font-medium text-gray-700">Mobile</label>
+                        <input type="tel" id="signupMobile" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="signupAddress" class="block text-sm font-medium text-gray-700">Address</label>
+                        <textarea id="signupAddress" rows="2" class="mt-1 block w-full px-3 py-2 border rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label for="signupParentMobile" class="block text-sm font-medium text-gray-700">Parent's Mobile (if student)</label>
+                        <input type="tel" id="signupParentMobile" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+                <div id="signupMessage" class="mt-4 text-center text-sm text-red-600"></div>
+                <p class="mt-4 text-center text-sm">
+                    Already have an account? 
+                    <a href="#" onclick="showPage('loginPage')" class="font-medium text-blue-600 hover:text-blue-500">
+                        Login
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- ===== MAIN DASHBOARD (Container for both roles) ===== -->
+        <div id="dashboardPage" class="hidden">
+            <!-- Navbar -->
+            <nav class="bg-white shadow-md">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-blue-600">School Portal</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div id="nav-links" class="flex space-x-4"></div>
+                            <button id="logoutButton" class="ml-4 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                
+                <!-- ===== TEACHER DASHBOARD ===== -->
+                <div id="teacherDashboard" class="hidden">
+                    
+                    <!-- Tab: Manage Students -->
+                    <div id="teacher-manage-students" class="tab-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="md:col-span-1 bg-white p-6 rounded-lg shadow">
+                                <h2 class="text-xl font-semibold mb-4">Add New Student</h2>
+                                <form id="addStudentForm" class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="addStudentFirstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                                            <input type="text" id="addStudentFirstName" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                        </div>
+                                        <div>
+                                            <label for="addStudentLastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                            <input type="text" id="addStudentLastName" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="addStudentEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                                        <input type="email" id="addStudentEmail" required class="mt-1 block w-full px-3 py-2 border bg-gray-50 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label for="addStudentPassword" class="block text-sm font-medium text-gray-700">Temporary Password</label>
+                                        <input type="password" id="addStudentPassword" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                    </div>
+                                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md">
+                                        Add Student
+                                    </button>
+                                    <div id="addStudentMessage" class="text-sm text-center"></div>
+                                </form>
+                            </div>
+
+                            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-semibold">Registered Students</h2>
+                                    <input type="text" id="studentSearch" placeholder="Search by name or email..." class="px-3 py-2 border rounded-md">
+                                </div>
+                                <div id="studentListContainer" class="overflow-x-auto">
+                                    <div id="studentListSpinner" class="flex justify-center items-center h-32">
+                                        <div class="spinner"></div>
+                                    </div>
+                                    <table id="studentListTable" class="min-w-full divide-y divide-gray-200 hidden">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="studentList" class="bg-white divide-y divide-gray-200">
+                                        </tbody>
+                                    </table>
+                                    <div id="studentListMessage" class="text-center text-gray-500 py-4"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab: Manage Syllabus -->
+                    <div id="teacher-manage-syllabus" class="tab-content hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="md:col-span-1 bg-white p-6 rounded-lg shadow">
+                                <h2 class="text-xl font-semibold mb-4">Add New Subject</h2>
+                                <form id="addSubjectForm" class="space-y-4">
+                                    <div>
+                                        <label for="addSubjectTitle" class="block text-sm font-medium text-gray-700">Subject Title</label>
+                                        <input type="text" id="addSubjectTitle" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                    </div>
+                                    <div>
+                                        <label for="addSubjectCode" class="block text-sm font-medium text-gray-700">Subject Code (e.g., CS101)</label>
+                                        <input type="text" id="addSubjectCode" required class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                    </div>
+                                    <div>
+                                        <label for="addSubjectDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                                        <textarea id="addSubjectDescription" rows="4" class="mt-1 block w-full px-3 py-2 border rounded-md"></textarea>
+                                    </div>
+                                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md">
+                                        Add Subject
+                                    </button>
+                                    <div id="addSubjectMessage" class="text-sm text-center"></div>
+                                </form>
+                            </div>
+
+                            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow">
+                                <h2 class="text-xl font-semibold mb-4">Current Syllabus</h2>
+                                <div id="subjectListContainer" class="overflow-x-auto">
+                                    <div id="subjectListSpinner" class="flex justify-center items-center h-32">
+                                        <div class="spinner"></div>
+                                    </div>
+                                    <table id="subjectListTable" class="min-w-full divide-y divide-gray-200 hidden">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="subjectList" class="bg-white divide-y divide-gray-200">
+                                        </tbody>
+                                    </table>
+                                    <div id="subjectListMessage" class="text-center text-gray-500 py-4"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- *** NEW TAB: GRADEBOOK *** -->
+                    <div id="teacher-gradebook" class="tab-content hidden">
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h2 class="text-2xl font-semibold mb-4">Gradebook</h2>
+                            
+                            <!-- Subject Selector -->
+                            <div class="mb-4">
+                                <label for="gradebookSubjectSelect" class="block text-sm font-medium text-gray-700">Select Subject to Grade</label>
+                                <select id="gradebookSubjectSelect" class="mt-1 block w-full md:w-1/2 px-3 py-2 border rounded-md">
+                                    <option value="">Loading subjects...</option>
+                                </select>
+                            </div>
+
+                            <!-- Enrolled Students Table -->
+                            <div id="gradebookSpinner" class="hidden flex justify-center items-center h-32">
+                                <div class="spinner"></div>
+                            </div>
+                            <div id="gradebookMessage" class="text-center text-gray-500 py-4">Please select a subject.</div>
+                            <div id="gradebookTableContainer" class="overflow-x-auto hidden">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Marks (out of 100)</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Grade (A, B, C...)</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Final Result</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Save</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="gradebookList" class="bg-white divide-y divide-gray-200">
+                                        <!-- Grade rows inserted by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ===== STUDENT DASHBOARD ===== -->
+                <div id="studentDashboard" class="hidden">
+                    <div id="student-select-subjects" class="tab-content">
+                        <h2 class="text-2xl font-semibold mb-4">Available Subjects</h2>
+                        <div id="studentSubjectListSpinner" class="flex justify-center items-center h-32">
+                            <div class="spinner"></div>
+                        </div>
+                        <div id="studentSubjectListMessage" class="text-center text-gray-500 py-4"></div>
+                        <div id="studentSubjectList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                    </div>
+                    <div id="student-my-results" class="tab-content hidden">
+                        <h2 class="text-2xl font-semibold mb-4">My Results</h2>
+                        <div id="myResultsListSpinner" class="flex justify-center items-center h-32">
+                            <div class="spinner"></div>
+                        </div>
+                        <div id="myResultsListMessage" class="text-center text-gray-500 py-4"></div>
+                        <div id="myResultsList" class="overflow-x-auto bg-white p-6 rounded-lg shadow">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject Code</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject Title</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teacher</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Marks</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Grade</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Result</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="myResultsListBody" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== (SHARED) PROFILE TAB ===== -->
+                <div id="profile-tab" class="tab-content hidden">
+                    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+                        <h2 class="text-xl font-semibold mb-4">My Profile</h2>
+                        <div id="profileSpinner" class="flex justify-center items-center h-32">
+                            <div class="spinner"></div>
+                        </div>
+                        <div id="profileErrorMessage" class="hidden p-4 bg-red-100 text-red-700 rounded-md">
+                            Failed to fetch profile.
+                        </div>
+                        <form id="profileForm" class="hidden space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="profileFirstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                                    <input type="text" id="profileFirstName" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                </div>
+                                <div>
+                                    <label for="profileLastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                    <input type="text" id="profileLastName" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="profileEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" id="profileEmail" readonly class="mt-1 block w-full px-3 py-2 border bg-gray-100 rounded-md">
+                            </div>
+                            <div>
+                                <label for="profileAge" class="block text-sm font-medium text-gray-700">Age</label>
+                                <input type="number" id="profileAge" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                            </div>
+                            <div>
+                                <label for="profileMobile" class="block text-sm font-medium text-gray-700">Mobile Number</label>
+                                <input type="tel" id="profileMobile" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                            </div>
+                            <div>
+                                <label for="profileAddress" class="block text-sm font-medium text-gray-700">Address</label>
+                                <textarea id="profileAddress" rows="3" class="mt-1 block w-full px-3 py-2 border rounded-md"></textarea>
+                            </div>
+                            <div id="studentProfileFields" class="hidden space-y-4">
+                                <div>
+                                    <label for="profileParentMobile" class="block text-sm font-medium text-gray-700">Parent's Mobile Number</label>
+                                    <input type="tel" id="profileParentMobile" class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md">
+                                Update Profile
+                            </button>
+                            <div id="profileUpdateMessage" class="text-sm text-center"></div>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+
+    <script>
+        // --- STATE & API ---
+        let appState = {
+            token: null,
+            userRole: null,
+            profile: null
+        };
+        const API_URL = 'http://localhost:8080';
+
+        // --- API Fetch Wrapper ---
+        async function fetchWithAuth(endpoint, options = {}) {
+            const token = appState.token || localStorage.getItem('token');
+            if (!token) {
+                console.error('No token found. Logging out.');
+                doLogout();
+                return;
+            }
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers,
+                'Authorization': `Bearer ${token}`
+            };
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+                if (response.status === 401 || response.status === 403) {
+                    console.error('Auth error. Logging out.');
+                    doLogout();
+                    throw new Error('Unauthorized');
+                }
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+                    console.error('API Error:', errorData);
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                if (response.status === 204) {
+                    return; 
+                }
+                const text = await response.text();
+                return text ? JSON.parse(text) : {};
+            } catch (error) {
+                console.error('FetchWithAuth Error:', error);
+                throw error; 
+            }
+        }
+
+        // --- PAGE NAVIGATION ---
+        function showPage(pageId) {
+            document.querySelectorAll('#app-container > div').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.querySelectorAll('#nav-links a').forEach(link => {
+                link.classList.remove('bg-blue-100', 'text-blue-700');
+                link.classList.add('text-gray-600', 'hover:bg-gray-50');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeLink = document.querySelector(`a[data-tab="${tabId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('bg-blue-100', 'text-blue-700');
+                activeLink.classList.remove('text-gray-600', 'hover:bg-gray-50');
+            }
+        }
+
+        // --- AUTHENTICATION ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const messageEl = document.getElementById('loginMessage');
+            messageEl.textContent = ''; 
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                if (response.ok) {
+                    const data = await response.json(); 
+                    messageEl.textContent = '';
+                    appState.token = data.token;
+                    appState.userRole = data.role;
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userRole', data.role);
+                    await setupDashboard();
+                } else {
+                    console.error('Login failed:', response.status, response.statusText);
+                    messageEl.textContent = 'Invalid email or password';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                messageEl.textContent = 'Login failed. Server may be down.';
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageEl = document.getElementById('signupMessage');
+            messageEl.textContent = ''; 
+            const signupData = {
+                firstName: document.getElementById('signupFirstName').value,
+                lastName: document.getElementById('signupLastName').value,
+                email: document.getElementById('signupEmail').value,
+                password: document.getElementById('signupPassword').value,
+                age: document.getElementById('signupAge').value ? parseInt(document.getElementById('signupAge').value) : 0,
+                mobile: document.getElementById('signupMobile').value,
+                address: document.getElementById('signupAddress').value,
+                parentMobile: document.getElementById('signupParentMobile').value
+            };
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(signupData)
+                });
+                const data = await response.json(); 
+                if (response.ok) {
+                    messageEl.textContent = '';
+                    customAlert('Account created successfully! Please log in.');
+                    showPage('loginPage');
+                } else {
+                    messageEl.textContent = data.message || 'Signup failed.';
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                messageEl.textContent = 'Signup failed. Server may be down.';
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', doLogout);
+
+        function doLogout() {
+            appState = { token: null, userRole: null, profile: null };
+            localStorage.removeItem('token');
+            localStorage.removeItem('userRole');
+            document.getElementById('nav-links').innerHTML = '';
+            showPage('loginPage');
+        }
+
+        // --- DASHBOARD SETUP ---
+        async function setupDashboard() {
+            showPage('dashboardPage');
+            const navLinks = document.getElementById('nav-links');
+            
+            if (appState.userRole === 'TEACHER') {
+                navLinks.innerHTML = `
+                    <a href="#" data-tab="teacher-manage-students" class="text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">Manage Students</a>
+                    <a href="#" data-tab="teacher-manage-syllabus" class="text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">Manage Syllabus</a>
+                    <!-- NEW NAV LINK -->
+                    <a href="#" data-tab="teacher-gradebook" class="text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">Gradebook</a>
+                    <a href="#" data-tab="profile-tab" class="text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">Profile</a>
+                `;
+                document.getElementById('teacherDashboard').classList.remove('hidden');
+                document.getElementById('studentDashboard').classList.add('hidden');
+                showTab('teacher-manage-students');
+                loadStudents();
+                loadSubjects(); 
+                loadTeacherSubjectsForGradebook(); // NEW
+            } else { // STUDENT
+                navLinks.innerHTML = `
+                    <a href="#" data-tab="student-select-subjects" class="text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">Select Subjects</a>
+                    <a href="#" data-tab="student-my-results" class="text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">My Results</a>
+                    <a href="#" data-tab="profile-tab" class="text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">Profile</a>
+                `;
+                document.getElementById('studentDashboard').classList.remove('hidden');
+                document.getElementById('teacherDashboard').classList.add('hidden');
+                showTab('student-select-subjects');
+                loadStudentSubjects(); 
+                loadMyResults();
+            }
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabId = e.target.getAttribute('data-tab');
+                    showTab(tabId);
+                });
+            });
+
+            loadProfile();
+        }
+        
+        (async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                appState.token = token;
+                appState.userRole = localStorage.getItem('userRole');
+                await setupDashboard();
+            }
+        })();
+
+        // --- PROFILE PAGE (SHARED) ---
+        async function loadProfile() {
+            document.getElementById('profileSpinner').classList.remove('hidden');
+            document.getElementById('profileForm').classList.add('hidden');
+            document.getElementById('profileErrorMessage').classList.add('hidden');
+            try {
+                const data = await fetchWithAuth(`/api/profile/me`);
+                appState.profile = data;
+                document.getElementById('profileFirstName').value = data.firstName || '';
+                document.getElementById('profileLastName').value = data.lastName || '';
+                document.getElementById('profileEmail').value = data.user.email || '';
+                document.getElementById('profileAge').value = data.age || 0;
+                document.getElementById('profileMobile').value = data.mobile || '';
+                document.getElementById('profileAddress').value = data.address || '';
+                if(appState.userRole === 'STUDENT') {
+                    document.getElementById('studentProfileFields').classList.remove('hidden');
+                    document.getElementById('profileParentMobile').value = data.parentMobile || '';
+                } else {
+                    document.getElementById('studentProfileFields').classList.add('hidden');
+                }
+                document.getElementById('profileSpinner').classList.add('hidden');
+                document.getElementById('profileForm').classList.remove('hidden');
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+                document.getElementById('profileSpinner').classList.add('hidden');
+                document.getElementById('profileErrorMessage').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageEl = document.getElementById('profileUpdateMessage');
+            const profileData = {
+                firstName: document.getElementById('profileFirstName').value,
+                lastName: document.getElementById('profileLastName').value,
+                age: document.getElementById('profileAge').value ? parseInt(document.getElementById('profileAge').value) : 0,
+                mobile: document.getElementById('profileMobile').value,
+                address: document.getElementById('profileAddress').value,
+                parentMobile: appState.userRole === 'STUDENT' ? document.getElementById('profileParentMobile').value : null,
+            };
+            try {
+                await fetchWithAuth(`/api/profile/me`, {
+                    method: 'PUT',
+                    body: JSON.stringify(profileData)
+                });
+                messageEl.textContent = 'Profile updated successfully!';
+                messageEl.classList.add('text-green-600');
+                messageEl.classList.remove('text-red-600');
+            } catch (error) {
+                console.error('Profile update error:', error);
+                messageEl.textContent = 'Failed to update profile.';
+                messageEl.classList.add('text-red-600');
+                messageEl.classList.remove('text-green-600');
+            }
+        });
+
+        // --- TEACHER: MANAGE STUDENTS ---
+        async function loadStudents(query = '') {
+            const listEl = document.getElementById('studentList');
+            const messageEl = document.getElementById('studentListMessage');
+            const tableEl = document.getElementById('studentListTable');
+            const spinnerEl = document.getElementById('studentListSpinner');
+            spinnerEl.classList.remove('hidden');
+            tableEl.classList.add('hidden');
+            listEl.innerHTML = '';
+            messageEl.textContent = '';
+            messageEl.classList.remove('text-red-600');
+            try {
+                const students = await fetchWithAuth(`/api/teacher/students?q=${query}`);
+                if (students.length === 0) {
+                    messageEl.textContent = query ? 'No students found matching your search.' : 'No students have registered yet.';
+                } else {
+                    students.forEach(profile => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">${profile.firstName} ${profile.lastName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${profile.user.email}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="deleteStudent(${profile.user.id}, '${profile.firstName}')" class="text-red-600 hover:text-red-900">Delete</button>
+                            </td>
+                        `;
+                        listEl.appendChild(tr);
+                    });
+                    tableEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Failed to load students:', error);
+                messageEl.textContent = 'Failed to fetch students.';
+                messageEl.classList.add('text-red-600');
+            } finally {
+                spinnerEl.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('studentSearch').addEventListener('input', (e) => {
+            loadStudents(e.target.value);
+        });
+
+        document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageEl = document.getElementById('addStudentMessage');
+            const studentData = {
+                firstName: document.getElementById('addStudentFirstName').value,
+                lastName: document.getElementById('addStudentLastName').value,
+                email: document.getElementById('addStudentEmail').value,
+                password: document.getElementById('addStudentPassword').value,
+            };
+            try {
+                const response = await fetchWithAuth(`/api/teacher/students`, {
+                    method: 'POST',
+                    body: JSON.stringify(studentData)
+                });
+                messageEl.textContent = response.message || 'Student created successfully!';
+                messageEl.classList.add('text-green-600');
+                messageEl.classList.remove('text-red-600');
+                document.getElementById('addStudentForm').reset();
+                loadStudents();
+            } catch (error) {
+                console.error('Add student error:', error);
+                messageEl.textContent = `Error: ${error.message}`;
+                messageEl.classList.add('text-red-600');
+                messageEl.classList.remove('text-green-600');
+            }
+        });
+
+        async function deleteStudent(userId, name) {
+            if (!await customConfirm(`Are you sure you want to delete ${name}?`)) return;
+            try {
+                await fetchWithAuth(`/api/teacher/students/${userId}`, {
+                    method: 'DELETE'
+                });
+                customAlert('Student deleted successfully.');
+                loadStudents();
+            } catch (error) {
+                console.error('Delete student error:', error);
+                customAlert('Failed to delete student.');
+            }
+        }
+
+        // --- TEACHER: MANAGE SYLLABUS ---
+        async function loadSubjects() {
+            const listEl = document.getElementById('subjectList');
+            const messageEl = document.getElementById('subjectListMessage');
+            const tableEl = document.getElementById('subjectListTable');
+            const spinnerEl = document.getElementById('subjectListSpinner');
+            spinnerEl.classList.remove('hidden');
+            tableEl.classList.add('hidden');
+            listEl.innerHTML = '';
+            messageEl.textContent = '';
+            messageEl.classList.remove('text-red-600');
+            try {
+                const subjects = await fetchWithAuth(`/api/subjects`);
+                if (subjects.length === 0) {
+                    messageEl.textContent = 'No subjects have been added to the syllabus yet.';
+                } else {
+                    subjects.forEach(subject => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">${subject.subjectCode}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${subject.title}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="deleteSubject(${subject.id}, '${subject.title}')" class="text-red-600 hover:text-red-900">Delete</button>
+                            </td>
+                        `;
+                        listEl.appendChild(tr);
+                    });
+                    tableEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Failed to load subjects:', error);
+                messageEl.textContent = 'Failed to fetch subjects.';
+                messageEl.classList.add('text-red-600');
+            } finally {
+                spinnerEl.classList.add('hidden');
+            }
+        }
+        
+        document.getElementById('addSubjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageEl = document.getElementById('addSubjectMessage');
+            const subjectData = {
+                title: document.getElementById('addSubjectTitle').value,
+                subjectCode: document.getElementById('addSubjectCode').value,
+                description: document.getElementById('addSubjectDescription').value,
+            };
+            try {
+                await fetchWithAuth(`/api/subjects`, {
+                    method: 'POST',
+                    body: JSON.stringify(subjectData)
+                });
+                messageEl.textContent = 'Subject created successfully!';
+                messageEl.classList.add('text-green-600');
+                messageEl.classList.remove('text-red-600');
+                document.getElementById('addSubjectForm').reset();
+                loadSubjects();
+            } catch (error) {
+                console.error('Add subject error:', error);
+                messageEl.textContent = `Error: ${error.message}`;
+                messageEl.classList.add('text-red-600');
+                messageEl.classList.remove('text-green-600');
+            }
+        });
+
+        async function deleteSubject(subjectId, title) {
+            if (!await customConfirm(`Are you sure you want to delete ${title}?`)) return;
+            try {
+                await fetchWithAuth(`/api/subjects/${subjectId}`, {
+                    method: 'DELETE'
+                });
+                customAlert('Subject deleted successfully.');
+                loadSubjects();
+            } catch (error) {
+                console.error('Delete subject error:', error);
+                customAlert('Failed to delete subject.');
+            }
+        }
+
+        // --- *** NEW: TEACHER GRADEBOOK FUNCTIONS *** ---
+        const gradebookSelect = document.getElementById('gradebookSubjectSelect');
+        const gradebookList = document.getElementById('gradebookList');
+        const gradebookSpinner = document.getElementById('gradebookSpinner');
+        const gradebookMessage = document.getElementById('gradebookMessage');
+        const gradebookTable = document.getElementById('gradebookTableContainer');
+
+        async function loadTeacherSubjectsForGradebook() {
+            try {
+                const subjects = await fetchWithAuth('/api/teacher/my-subjects');
+                gradebookSelect.innerHTML = '<option value="">-- Select a subject --</option>';
+                if (subjects.length === 0) {
+                    gradebookSelect.innerHTML = '<option value="">You have not created any subjects</option>';
+                }
+                subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.id;
+                    option.textContent = `${subject.subjectCode} - ${subject.title}`;
+                    gradebookSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Failed to load teacher subjects:', error);
+                gradebookSelect.innerHTML = '<option value="">Failed to load subjects</option>';
+            }
+        }
+
+        gradebookSelect.addEventListener('change', (e) => {
+            const subjectId = e.target.value;
+            if (subjectId) {
+                loadStudentsForGrading(subjectId);
+            } else {
+                gradebookList.innerHTML = '';
+                gradebookMessage.textContent = 'Please select a subject.';
+                gradebookTable.classList.add('hidden');
+            }
+        });
+
+        async function loadStudentsForGrading(subjectId) {
+            gradebookSpinner.classList.remove('hidden');
+            gradebookTable.classList.add('hidden');
+            gradebookMessage.textContent = '';
+            gradebookList.innerHTML = '';
+
+            try {
+                const enrollments = await fetchWithAuth(`/api/teacher/subject/${subjectId}/enrollments`);
+                if (enrollments.length === 0) {
+                    gradebookMessage.textContent = 'No students are enrolled in this subject yet.';
+                } else {
+                    enrollments.forEach(enrollment => {
+                        const tr = document.createElement('tr');
+                        tr.id = `enrollment-row-${enrollment.enrollmentId}`;
+                        
+                        const marks = enrollment.marks || '';
+                        const grade = enrollment.grade || '';
+                        const result = enrollment.finalResult || '';
+
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">${enrollment.studentName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${enrollment.studentEmail}</td>
+                            <td class="px-6 py-4">
+                                <input type="number" class="grade-marks border rounded-md px-2 py-1 w-24" value="${marks}">
+                            </td>
+                            <td class="px-6 py-4">
+                                <input type="text" class="grade-grade border rounded-md px-2 py-1 w-20" value="${grade}">
+                            </td>
+                            <td class="px-6 py-4">
+                                <select class="grade-result border rounded-md px-2 py-1">
+                                    <option value="" ${result === '' ? 'selected' : ''}>Pending</option>
+                                    <option value="PASS" ${result === 'PASS' ? 'selected' : ''}>Pass</option>
+                                    <option value="FAIL" ${result === 'FAIL' ? 'selected' : ''}>Fail</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button onclick="saveGrade(this, ${enrollment.enrollmentId})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm">
+                                    Save
+                                </button>
+                                <span class="save-status text-green-600 text-sm ml-2"></span>
+                            </td>
+                        `;
+                        gradebookList.appendChild(tr);
+                    });
+                    gradebookTable.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Failed to load students for grading:', error);
+                gradebookMessage.textContent = 'Failed to load students.';
+            } finally {
+                gradebookSpinner.classList.add('hidden');
+            }
+        }
+
+        async function saveGrade(buttonEl, enrollmentId) {
+            const row = document.getElementById(`enrollment-row-${enrollmentId}`);
+            const statusEl = row.querySelector('.save-status');
+            statusEl.textContent = 'Saving...';
+            
+            const gradeData = {
+                marks: parseInt(row.querySelector('.grade-marks').value) || null,
+                grade: row.querySelector('.grade-grade').value,
+                finalResult: row.querySelector('.grade-result').value || null
+            };
+
+            try {
+                await fetchWithAuth(`/api/teacher/enrollment/${enrollmentId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(gradeData)
+                });
+                statusEl.textContent = 'Saved!';
+            } catch (error) {
+                console.error('Failed to save grade:', error);
+                statusEl.textContent = 'Error';
+            } finally {
+                setTimeout(() => { statusEl.textContent = ''; }, 2000);
+            }
+        }
+
+
+        // --- STUDENT: SELECT SUBJECTS ---
+        async function loadStudentSubjects() {
+            const listEl = document.getElementById('studentSubjectList');
+            const messageEl = document.getElementById('studentSubjectListMessage');
+            const spinnerEl = document.getElementById('studentSubjectListSpinner');
+            spinnerEl.classList.remove('hidden');
+            listEl.innerHTML = '';
+            messageEl.textContent = '';
+            try {
+                const subjects = await fetchWithAuth(`/api/student/subjects`);
+                if (subjects.length === 0) {
+                    messageEl.textContent = 'The syllabus is currently empty. Please check back later.';
+                } else {
+                    subjects.forEach(subject => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-6 rounded-lg shadow';
+                        card.innerHTML = `
+                            <h3 class="text-lg font-semibold">${subject.title}</h3>
+                            <p class="text-sm text-gray-600 mb-1">${subject.subjectCode}</p>
+                            <p class="text-sm text-gray-800 mb-4">
+                                Taught by: ${subject.teacherProfile.firstName} ${subject.teacherProfile.lastName}
+                            </p>
+                            <p class="text-gray-700 text-sm mb-4">${subject.description || ''}</p>
+                            <button onclick="enrollInSubject(${subject.id}, '${subject.title}')" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md">
+                                Enroll
+                            </button>
+                        `;
+                        listEl.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load subjects:', error);
+                messageEl.textContent = 'Failed to fetch subjects.';
+                messageEl.classList.add('text-red-600');
+            } finally {
+                spinnerEl.classList.add('hidden');
+            }
+        }
+
+        async function enrollInSubject(subjectId, title) {
+            if (!await customConfirm(`Are you sure you want to enroll in ${title}?`)) return;
+            try {
+                const response = await fetchWithAuth(`/api/student/enroll/${subjectId}`, {
+                    method: 'POST'
+                });
+                customAlert(response.message);
+                loadMyResults();
+            } catch (error) {
+                console.error('Enrollment error:', error);
+                customAlert(`Error: ${error.message}`);
+            }
+        }
+
+        // --- STUDENT: MY RESULTS ---
+        async function loadMyResults() {
+            const listEl = document.getElementById('myResultsListBody');
+            const messageEl = document.getElementById('myResultsListMessage');
+            const tableEl = document.getElementById('myResultsList');
+            const spinnerEl = document.getElementById('myResultsListSpinner');
+            spinnerEl.classList.remove('hidden');
+            tableEl.classList.add('hidden');
+            listEl.innerHTML = '';
+            messageEl.textContent = '';
+            try {
+                const results = await fetchWithAuth(`/api/student/my-results`);
+                if (results.length === 0) {
+                    messageEl.textContent = 'You are not enrolled in any subjects yet.';
+                    tableEl.classList.add('hidden');
+                } else {
+                    results.forEach(result => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">${result.subjectCode}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${result.subjectTitle}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${result.teacherName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${result.marks || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${result.grade || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${result.finalResult || 'Pending'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="unenrollFromSubject(${result.enrollmentId}, '${result.subjectTitle}')" class="text-red-600 hover:text-red-900">
+                                    Un-enroll
+                                </button>
+                            </td>
+                        `;
+                        listEl.appendChild(tr);
+                    });
+                    tableEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Failed to load results:', error);
+                messageEl.textContent = 'Failed to fetch your results.';
+                messageEl.classList.add('text-red-600');
+            } finally {
+                spinnerEl.classList.add('hidden');
+            }
+        }
+
+        async function unenrollFromSubject(enrollmentId, title) {
+            if (!await customConfirm(`Are you sure you want to un-enroll from ${title}? This cannot be undone.`)) return;
+            try {
+                const response = await fetchWithAuth(`/api/student/enrollment/${enrollmentId}`, {
+                    method: 'DELETE'
+                });
+                customAlert(response.message || 'Successfully un-enrolled.');
+                loadMyResults();
+            } catch (error) {
+                console.error('Un-enrollment error:', error);
+                customAlert('Failed to un-enroll.');
+            }
+        }
+        
+        // --- Custom Modal Replacements ---
+        const modal = document.getElementById('customModal');
+        const modalMessage = document.getElementById('customModalMessage');
+        const modalButtons = document.getElementById('customModalButtons');
+
+        function customAlert(message) {
+            modalMessage.textContent = message;
+            modalButtons.innerHTML = `<button id="modalOkBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md">OK</button>`;
+            modal.classList.remove('hidden');
+            return new Promise((resolve) => {
+                document.getElementById('modalOkBtn').onclick = () => {
+                    modal.classList.add('hidden');
+                    resolve(true);
+                };
+            });
+        }
+
+        function customConfirm(message) {
+            modalMessage.textContent = message;
+            modalButtons.innerHTML = `
+                <button id="modalCancelBtn" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md">Cancel</button>
+                <button id="modalConfirmBtn" class="bg-red-600 text-white px-4 py-2 rounded-md">Confirm</button>
+            `;
+            modal.classList.remove('hidden');
+            return new Promise((resolve) => {
+                document.getElementById('modalConfirmBtn').onclick = () => {
+                    modal.classList.add('hidden');
+                    resolve(true);
+                };
+                document.getElementById('modalCancelBtn').onclick = () => {
+                    modal.classList.add('hidden');
+                    resolve(false);
+                };
+            });
+        }
+    </script>
+</body>
+</html>
+
